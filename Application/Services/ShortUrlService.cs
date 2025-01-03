@@ -9,12 +9,7 @@ public class ShortUrlService : IShortUrlService
 {
     private readonly IShortUrlRepository _shortUrlRepository;
 
-    public ShortUrl GetShortUrl(string shortUrl)
-    { 
-        return new ShortUrl();
-    }
-
-    public async Task<string> GenerateUniqueShortUrl(ShortUrl shortUrl)
+    public async Task<string> GenerateUniqueShortUrl(string longUrl)
     {
         string shortGeneratedUrl;
 
@@ -23,6 +18,9 @@ public class ShortUrlService : IShortUrlService
             shortGeneratedUrl = GenerateRandomString(7);
 
         } while (await _shortUrlRepository.ExistsByShortUrl(shortGeneratedUrl));
+
+        var shortUrl = new ShortUrl{ Link = longUrl, ShortLink = shortGeneratedUrl, DateCreated = DateTime.Now };
+        await _shortUrlRepository.AddAsync(shortUrl);
 
         return shortGeneratedUrl;
     }

@@ -20,12 +20,6 @@ public class ShortUrlRepository : IShortUrlRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<ShortUrl> FindByLongUrl(string? longUrl)
-    {
-        var link = await _context.ShortUrls.FirstOrDefaultAsync(x => x.Link == longUrl);
-        return link;
-    }
-
     public async Task<bool> ExistsByShortUrl(string? shortUrl)
     {
         return await _context.ShortUrls.AnyAsync(x => x.ShortLink == shortUrl);

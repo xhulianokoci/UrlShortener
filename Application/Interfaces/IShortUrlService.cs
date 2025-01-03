@@ -2,4 +2,5 @@
 
 public interface IShortUrlService
 {
+    Task<string> GenerateUniqueShortUrl(string longUrl);
 }

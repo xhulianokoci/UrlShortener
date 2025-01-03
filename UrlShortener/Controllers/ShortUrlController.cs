@@ -1,23 +1,31 @@
-using Domain.Entities;
+using Application.DTOs;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace UrlShortener.Controllers
+namespace UrlShortener.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class ShortUrlController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class ShortUrlController : ControllerBase
+    private readonly IShortUrlService _shortUrlService;
+
+    public ShortUrlController(IShortUrlService shortUrlService)
     {
-        private readonly ILogger<ShortUrlController> _logger;
+        _shortUrlService = shortUrlService;
+    }
 
-        public ShortUrlController(ILogger<ShortUrlController> logger)
-        {
-            _logger = logger;
-        }
 
-        [HttpGet(Name = "GetShortUrl")]
-        public ShortUrl Get()
-        {
-            return new ShortUrl();
-        }
+    [HttpPost(Name = "GetShortUrl")]
+    public async Task<IActionResult> CreateShortUrl([FromBody] LongUrlRequestDTO requestDTO)
+    {
+        if (string.IsNullOrWhiteSpace(requestDTO.LongUrl))
+            return BadRequest("Link cannot be empty.");
+
+        var shortUrl = await _shortUrlService.GenerateUniqueShortUrl(requestDTO.LongUrl);
+        
+        var response = new ShortUrlResponseDTO { Url = requestDTO.LongUrl, ShortUrl = shortUrl };
+        
+        return Ok(response);
     }
 }
