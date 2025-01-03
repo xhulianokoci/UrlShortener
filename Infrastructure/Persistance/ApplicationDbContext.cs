@@ -10,4 +10,11 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<ShortUrl> ShortUrls { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ShortUrl>()
+            .HasIndex(u => u.ShortLink)
+            .IsUnique();
+    }
 }
