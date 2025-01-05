@@ -18,11 +18,6 @@ public class ShortUrlRepository : IShortUrlRepository
 
     public async Task AddAsync(ShortUrl shortUrl)
     {
-        if (_context == null)
-            throw new InvalidOperationException("Database context is not initialized.");
-        if (_context.ShortUrls == null)
-            throw new InvalidOperationException("ShortUrls DbSet is not initialized.");
-
         await _context.ShortUrls.AddAsync(shortUrl); ;
         await _context.SaveChangesAsync();
     }
@@ -39,11 +34,6 @@ public class ShortUrlRepository : IShortUrlRepository
 
     public async Task<List<ShortUrl>> GetAllAsync()
     {
-        if (_context == null || _context.ShortUrls == null)
-        {
-            throw new InvalidOperationException("Database context or DbSet is not initialized.");
-        }
-
         return await _context.ShortUrls.ToListAsync();
     }
 }

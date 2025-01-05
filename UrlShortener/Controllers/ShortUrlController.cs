@@ -13,9 +13,6 @@ public class ShortUrlController : ControllerBase
     public ShortUrlController(IShortUrlService service)
     {
         _service = service ?? throw new ArgumentNullException(nameof(service));
-        if (_service == null)
-            throw new InvalidOperationException("Service is not injected.");
-
     }
 
     [HttpPost(Name = "CreatShortUrl")]
