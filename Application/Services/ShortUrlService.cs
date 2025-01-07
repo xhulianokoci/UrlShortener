@@ -49,33 +49,17 @@ public class ShortUrlService : IShortUrlService
         return $"{_shortUrlDomain.BaseUrl}/{shortGeneratedUrl}";
     }
 
-    public async Task<string?> GetLongUrlByShortCodeAsync(string fullShortUrl)
+    public async Task<string?> GetLongUrlByShortCodeAsync(string shortCode)
     {
-        try
+        if (string.IsNullOrWhiteSpace(shortCode))
         {
-            var shortCode = ExtractShortCode(fullShortUrl);
-
-            var shortUrl = await _shortUrlRepository.GetByShortLinkAsync(shortCode);
-
-            return shortUrl?.Link;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Validation error: {ex.Message}");
-            return null;
-        }
-    }
-
-    private string ExtractShortCode(string fullShortUrl)
-    {
-        var decodedUrl = Uri.UnescapeDataString(fullShortUrl);
-
-        if (!decodedUrl.StartsWith(_shortUrlDomain.BaseUrl, StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException("Short url does not match the base url of the application.");
+            throw new ArgumentException("Short code cannot be empty.", nameof(shortCode));
         }
 
-        return decodedUrl.Substring(_shortUrlDomain.BaseUrl.Length + 1);
+        // Query the database to find the corresponding long URL
+        var shortUrl = await _shortUrlRepository.GetByShortLinkAsync(shortCode);
+
+        return shortUrl?.Link; // Return the long URL or null if not found
     }
 
     private const string Characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

@@ -13,7 +13,22 @@ builder.Services.Configure<ShortUrlSettings>(
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplicationServices();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin() 
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
 
+    options.AddPolicy("AllowSwagger", builder =>
+    {
+        builder.WithOrigins("https://localhost:7214") // Allow Swagger origin
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -28,6 +43,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowSwagger");
 
 app.UseHttpsRedirection();
 

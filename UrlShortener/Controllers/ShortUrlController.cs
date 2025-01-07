@@ -46,22 +46,26 @@ public class ShortUrlController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(shortCode))
         {
-            return BadRequest("Short link cannot be empty");
+            return BadRequest("Short code cannot be empty.");
         }
 
         try
         {
+            // Get the long URL from the service
             var longUrl = await _service.GetLongUrlByShortCodeAsync(shortCode);
 
             if (longUrl == null)
             {
-                return BadRequest("Short URL not found.");
+                return NotFound("Short URL not found.");
             }
 
+            // Perform the redirection
             return Redirect(longUrl);
         }
         catch (Exception ex)
         {
+            // Log the exception
+            Console.WriteLine($"Error during redirection: {ex.Message}");
             return StatusCode(500, "An error occurred while processing the request.");
         }
     }
