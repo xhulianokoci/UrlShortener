@@ -40,4 +40,29 @@ public class ShortUrlController : ControllerBase
             return StatusCode(500, "An error occurred while processing the request.");
         }
     }
+
+    [HttpGet("{shortCode}")]
+    public async Task<IActionResult> RedirectToLongUrl(string shortCode)
+    {
+        if (string.IsNullOrWhiteSpace(shortCode))
+        {
+            return BadRequest("Short link cannot be empty");
+        }
+
+        try
+        {
+            var longUrl = await _service.GetLongUrlByShortCodeAsync(shortCode);
+
+            if (longUrl == null)
+            {
+                return BadRequest("Short link not found.");
+            }
+
+            return Redirect(longUrl);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "An error occurred while processing the request.");
+        }
+    }
 }

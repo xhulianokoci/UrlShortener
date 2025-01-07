@@ -28,7 +28,7 @@ public class ShortUrlService : IShortUrlService
 
         if (string.IsNullOrWhiteSpace(_shortUrlDomain.BaseUrl))
             throw new InvalidOperationException("Base URL is not configured.");
-
+        
         string shortGeneratedUrl;
 
         do
@@ -48,6 +48,19 @@ public class ShortUrlService : IShortUrlService
 
         return $"{_shortUrlDomain.BaseUrl}/{shortGeneratedUrl}";
     }
+
+    public async Task<string?> GetLongUrlByShortCodeAsync(string shortCode)
+    {
+        var shortUrl = await _shortUrlRepository.GetByShortLinkAsync(shortCode);
+
+        if(shortUrl == null)
+        {
+            return null;
+        }
+
+        return shortUrl.Link;
+    }
+
 
     private const string Characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 

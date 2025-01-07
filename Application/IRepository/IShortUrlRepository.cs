@@ -8,4 +8,5 @@ public interface IShortUrlRepository
     Task<bool> ExistsByShortLinkAsync(string? shortUrl);
     Task<ShortUrl?> GetByLongUrlAsync(string longUrl);
     Task<List<ShortUrl>> GetAllAsync();
+    Task<ShortUrl?> GetByShortLinkAsync(string shortCode);
 }
