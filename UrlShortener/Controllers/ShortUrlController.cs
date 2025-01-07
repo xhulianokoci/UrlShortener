@@ -55,7 +55,7 @@ public class ShortUrlController : ControllerBase
 
             if (longUrl == null)
             {
-                return BadRequest("Short link not found.");
+                return BadRequest("Short URL not found.");
             }
 
             return Redirect(longUrl);

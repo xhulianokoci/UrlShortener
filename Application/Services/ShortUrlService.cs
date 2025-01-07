@@ -20,7 +20,7 @@ public class ShortUrlService : IShortUrlService
 
     public async Task<string> GenerateUniqueShortUrl(string longUrl)
     {
-        var existingShortUrl = await _shortUrlRepository.GetByLongUrlAsync(longUrl);
+         var existingShortUrl = await _shortUrlRepository.GetByLongUrlAsync(longUrl);
         if (existingShortUrl != null)
         {
             return $"{_shortUrlDomain.BaseUrl}/{existingShortUrl.ShortLink}";
@@ -49,18 +49,34 @@ public class ShortUrlService : IShortUrlService
         return $"{_shortUrlDomain.BaseUrl}/{shortGeneratedUrl}";
     }
 
-    public async Task<string?> GetLongUrlByShortCodeAsync(string shortCode)
+    public async Task<string?> GetLongUrlByShortCodeAsync(string fullShortUrl)
     {
-        var shortUrl = await _shortUrlRepository.GetByShortLinkAsync(shortCode);
-
-        if(shortUrl == null)
+        try
         {
+            var shortCode = ExtractShortCode(fullShortUrl);
+
+            var shortUrl = await _shortUrlRepository.GetByShortLinkAsync(shortCode);
+
+            return shortUrl?.Link;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Validation error: {ex.Message}");
             return null;
         }
-
-        return shortUrl.Link;
     }
 
+    private string ExtractShortCode(string fullShortUrl)
+    {
+        var decodedUrl = Uri.UnescapeDataString(fullShortUrl);
+
+        if (!decodedUrl.StartsWith(_shortUrlDomain.BaseUrl, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException("Short url does not match the base url of the application.");
+        }
+
+        return decodedUrl.Substring(_shortUrlDomain.BaseUrl.Length + 1);
+    }
 
     private const string Characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 

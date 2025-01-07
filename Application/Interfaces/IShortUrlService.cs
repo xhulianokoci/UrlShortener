@@ -3,5 +3,5 @@
 public interface IShortUrlService
 {
     Task<string> GenerateUniqueShortUrl(string longUrl);
-    Task<string?> GetLongUrlByShortCodeAsync(string shortCode);
+    Task<string?> GetLongUrlByShortCodeAsync(string fullShortUrl);
 }
